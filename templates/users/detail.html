@@ -1,0 +1,137 @@
+{% extends 'base.html' %} {% block content %}
+
+<div
+  id="warbler-hero"
+  style="background-image: url({{user.header_image_url}}); background-size: cover;"
+  class="full-width"
+></div>
+<img
+  src="{{ user.image_url }}"
+  alt="Image for {{ user.username }}"
+  id="profile-avatar"
+/>
+<div class="row full-width">
+  <div class="container">
+    <div class="row justify-content-end">
+      <div class="col-9">
+        <ul class="user-stats nav nav-pills">
+          <li class="stat">
+            <p class="small">Messages</p>
+            <h4>
+              <a href="/users/{{ user.id }}">{{ user.messages | length }}</a>
+            </h4>
+          </li>
+          <li class="stat">
+            <p class="small">Following</p>
+            <h4>
+              <a href="/users/{{ user.id }}/following"
+                >{{ user.following | length }}</a
+              >
+            </h4>
+          </li>
+          <li class="stat">
+            <p class="small">Followers</p>
+            <h4>
+              <a href="/users/{{ user.id }}/followers"
+                >{{ user.followers | length }}</a
+              >
+            </h4>
+          </li>
+          <li class="stat">
+            <p class="small">Likes</p>
+            <h4>
+              <a href="/users/{{user.id}}/likes">{{ user.likes|length }}</a>
+            </h4>
+          </li>
+          <div class="ml-auto">
+            {% if g.user.id == user.id %}
+            <a href="/users/profile" class="btn btn-outline-secondary"
+              >Edit Profile</a
+            >
+            <!-- Button trigger modal -->
+            <button
+              type="button"
+              class="btn btn-outline-danger ml-2"
+              data-toggle="modal"
+              data-target="#deleteModal"
+            >
+              Delete Profile
+            </button>
+            <!-- Modal -->
+            <div
+              class="modal fade"
+              id="deleteModal"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="deleteModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border-danger">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                      Delete Profile
+                    </h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are you sure you want to delete your profile?</p>
+                    <p>You can't go back</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      data-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                    <form
+                      method="POST"
+                      action="/users/delete"
+                      class="form-inline"
+                    >
+                      <button type="button" class="btn btn-success">
+                        Delete <strong>{{user.username}}</strong>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% elif g.user %} {% if g.user.is_following(user) %}
+            <form method="POST" action="/users/stop-following/{{ user.id }}">
+              <button class="btn btn-primary">Unfollow</button>
+            </form>
+            {% else %}
+            <form method="POST" action="/users/follow/{{ user.id }}">
+              <button class="btn btn-outline-primary">Follow</button>
+            </form>
+            {% endif %} {% endif %}
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3">
+    <h4 id="sidebar-username">@{{ user.username }}</h4>
+    <p>{{user.bio}}</p>
+    <p class="user-location">
+      <span class="fa fa-map-marker"></span> {{user.location}}
+    </p>
+  </div>
+
+  {% block user_details %} {% endblock %}
+</div>
+
+{% endblock %}

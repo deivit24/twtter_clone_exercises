@@ -1,0 +1,54 @@
+{% extends 'base.html' %} {% block content %}
+<div class="home-hero">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="box-header">
+        <h1>What's Happening Now?</h1>
+      </div>
+      <br />
+      <div class="box-scroll">
+        <ul class="list-group" id="messages">
+          {% for msg in messages %}
+          <li class="list-group-item my-2 p-3">
+            <a href="/messages/{{ msg.id  }}" class="message-link" />
+            <a href="/users/{{ msg.user.id }}">
+              <img
+                src="{{ msg.user.image_url }}"
+                alt=""
+                class="timeline-image"
+              />
+            </a>
+            <div class="message-area">
+              <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
+              <span class="text-muted"
+                >{{ msg.timestamp.strftime('%d %B %Y') }}</span
+              >
+              <p>{{ msg.text }}</p>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div id="login-box">
+        <h4>New to Warbler?</h4>
+        <p>Sign up now to get your own personalized timeline!</p>
+        <form method="POST" action="/login" id="user_form">
+          {{ form.hidden_tag() }} {% for field in form if
+          field.widget.input_type != 'hidden' %} {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %} {{ field(placeholder=field.label.text,
+          class="form-control") }} {% endfor %}
+
+          <div class="text-justify-center">
+            <button class="btn btn-primary">Log in</button>
+            <p><small>or</small></p>
+            <a href="/signup" class="btn btn-info">Sign up</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
